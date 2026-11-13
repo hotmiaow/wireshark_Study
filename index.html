@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireshark Sample Captures Lab • 封包深度研析實驗室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="#" class="brand" onclick="resetAllFilters()">
+          <div class="brand-icon">
+            <!-- Shark Fin / Wave SVG -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 16.5c2-2 4-3 7-3 5 0 7 6 13 3-2 3-5 4.5-9 4.5-5 0-8-3-11-4.5z"/>
+              <path d="M14 13.5V5c0-1.5-1-3-2.5-3-1 2-2 5-2.5 8"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Wireshark Captures Lab <span class="brand-badge" data-i18n="brandBadge">官方 Wiki 全收錄</span></h1>
+            <p data-i18n="brandSubtitle">按技術難度與真實網路場景分類 • 深度故障排查與分析教學</p>
+          </div>
+        </a>
+
+        <div class="header-actions">
+          <!-- Language Switcher -->
+          <div class="lang-switcher">
+            <button id="langZhBtn" class="lang-btn active">繁體中文</button>
+            <button id="langEnBtn" class="lang-btn">English</button>
+          </div>
+
+          <button class="btn" onclick="openCheatSheet()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span data-i18n="cheatSheetBtn">Wireshark 必備速查手冊</span>
+          </button>
+          
+          <button id="themeToggle" class="btn btn-icon" title="Toggle Dark/Light Mode">
+            <!-- Populated by JS -->
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    
+    <!-- Hero Banner & Overview Metrics -->
+    <section class="hero-section">
+      <div class="hero-card">
+        <h2 data-i18n="heroTitle">Wireshark 封包深度研析實驗室</h2>
+        <p data-i18n="heroDesc">
+          收錄 Wireshark 官方 Wiki 全部 <strong>623 個經典封包樣本</strong> 與 <strong>1,379 個離線檔案</strong>。全站依據 <strong>4 大難度等級</strong> 與 <strong>11 種實戰情境</strong> 系統化整理，每一筆封包皆提供深入解析：<em>【什麼是正常狀態】、【什麼是異常/問題現象】、以及【如何精確定位與排查問題】。</em>
+        </p>
+
+        <!-- Metric Badges -->
+        <div class="metrics-row">
+          <div class="metric-box" onclick="resetAllFilters()" style="cursor:pointer;">
+            <div class="metric-icon" style="background:rgba(56, 189, 248, 0.15); color:#38bdf8;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div>
+              <div class="metric-val">623</div>
+              <div class="metric-lbl" data-i18n="metric1">官方精選樣本</div>
+            </div>
+          </div>
+
+          <div class="metric-box" onclick="currentFilter.level='1'; levelFilter.value='1'; renderCaptures();" style="cursor:pointer;">
+            <div class="metric-icon" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <div>
+              <div class="metric-val">4 Levels</div>
+              <div class="metric-lbl" data-i18n="metric2">4 大難度等級</div>
+            </div>
+          </div>
+
+          <div class="metric-box" onclick="currentFilter.situation='web_internet'; setSituation('web_internet');" style="cursor:pointer;">
+            <div class="metric-icon" style="background:rgba(168, 85, 247, 0.15); color:#a855f7;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </div>
+            <div>
+              <div class="metric-val">11 Domains</div>
+              <div class="metric-lbl" data-i18n="metric3">11 種實戰領域</div>
+            </div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-icon" style="background:rgba(244, 63, 94, 0.15); color:#f43f5e;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="metric-val">1,379 Files</div>
+              <div class="metric-lbl" data-i18n="metric4">1.1 GB 本地全典藏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Curated Study Tracks -->
+    <section class="tracks-section">
+      <div class="section-header">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span data-i18n="tracksTitle">實戰學習專題路徑 (Study Tracks)</span>
+        </div>
+        <span style="font-size:0.8rem; color:var(--text-muted);" data-i18n="tracksSub">點選任一路徑立即進入系統化學習與情境演練</span>
+      </div>
+      <div id="tracksContainer" class="tracks-grid">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- Filter & Search Toolbar -->
+    <section class="filter-toolbar">
+      <div class="filter-row">
+        <!-- Search Input -->
+        <div class="search-box">
+          <span class="search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input type="text" id="searchInput" class="search-input" placeholder="搜尋封包名稱、協議 (如 DNS, BGP, SIP, Blaster, Modbus, 零視窗)...">
+          <button id="searchClear" class="search-clear">✕</button>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+          <!-- Level Filter -->
+          <select id="levelFilter" class="select-control"></select>
+
+          <!-- Situation Dropdown -->
+          <select id="situationFilter" class="select-control"></select>
+
+          <!-- Protocol Filter -->
+          <select id="protocolFilter" class="select-control"></select>
+
+          <!-- Sort Select -->
+          <select id="sortSelect" class="select-control">
+            <option value="default" data-i18n="sortDefault">預設排序</option>
+            <option value="name_asc" data-i18n="sortNameAsc">標題 (A 到 Z)</option>
+            <option value="level_asc" data-i18n="sortLevelAsc">技術難度 (初級優先)</option>
+            <option value="level_desc" data-i18n="sortLevelDesc">技術難度 (專家優先)</option>
+            <option value="size_desc" data-i18n="sortSizeDesc">檔案大小 (由大到小)</option>
+            <option value="size_asc" data-i18n="sortSizeAsc">檔案大小 (由小到大)</option>
+          </select>
+
+          <!-- View Switcher -->
+          <div class="view-toggle">
+            <button id="viewCardsBtn" class="view-btn active" title="Card Grid View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button id="viewTableBtn" class="view-btn" title="Compact Table View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Situation Pills Navigation -->
+    <div id="situationPills" class="situation-pills">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Active Filters Bar -->
+    <div id="activeFilters" class="active-filters">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Results Meta -->
+    <div class="results-meta">
+      <div id="resultsCount">載入封包中...</div>
+      <div id="resultsHint">點選 <strong>【深度研析與排查】</strong> 查看正常狀態、問題分析與 Wireshark 排查步驟</div>
+    </div>
+
+    <!-- Captures Container (Cards or Table) -->
+    <div id="capturesContainer">
+      <!-- Populated by JS -->
+    </div>
+
+    <div style="margin: 40px 0 60px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 24px;">
+      <span data-i18n="footerText">Wireshark Sample Captures Portal • 完整下載自 Wireshark Foundation 官方 Wiki</span>
+      <br>
+      <span data-i18n="footerPath">完整本地離線資料夾路徑：</span> <code style="color:var(--accent-blue);">/home/keith/Downloads/Wireshark_Study/captures/</code>
+    </div>
+
+  </main>
+
+  <!-- Detail Inspector Modal with 3-Part Diagnostics -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span id="modalId" class="card-id-tag">CAP-000</span>
+            <span id="modalBadge" class="level-badge level-emerald">Beginner</span>
+          </div>
+          <h2 id="modalTitle" style="font-size:1.3rem; font-weight:800; color:var(--text-primary); line-height:1.3;"></h2>
+          <div id="modalFilename" style="font-family:monospace; font-size:0.8rem; color:var(--accent-cyan); margin-top:2px;"></div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="detail-block">
+          <div class="detail-label" data-i18n="modalDomain">所屬網路場景與 Wiki 階層架構</div>
+          <div id="modalHierarchy" class="detail-content" style="color:var(--text-secondary); font-size:0.85rem;"></div>
+          <div id="modalSituation" style="font-weight:600; color:var(--accent-blue); font-size:0.9rem;"></div>
+        </div>
+
+        <div class="detail-block">
+          <div class="detail-label" data-i18n="modalContext">封包背景脈絡與情境說明</div>
+          <div id="modalDesc" class="detail-content"></div>
+        </div>
+
+        <!-- 3-Part Diagnostic Framework -->
+        <div class="diagnostic-container">
+          
+          <!-- 1. Normal State -->
+          <div class="diag-card diag-normal">
+            <div class="diag-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+              <span data-i18n="diagNormalTitle">1. 【正常狀態】標準通訊協定行為與預期回應</span>
+            </div>
+            <div id="modalDiagNormal" class="diag-card-content"></div>
+          </div>
+
+          <!-- 2. The Issue / Anomaly / Attack -->
+          <div class="diag-card diag-issue">
+            <div class="diag-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span data-i18n="diagIssueTitle">2. 【異常/問題現象】故障徵兆、連線停滯或攻擊特徵</span>
+            </div>
+            <div id="modalDiagIssue" class="diag-card-content"></div>
+          </div>
+
+          <!-- 3. How to Check and Diagnose in Wireshark -->
+          <div class="diag-card diag-check">
+            <div class="diag-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span data-i18n="diagCheckTitle">3. 【如何檢查與排查】Wireshark 實戰步驟與關鍵定位點</span>
+            </div>
+            <div id="modalDiagCheck" class="diag-card-content"></div>
+          </div>
+
+        </div>
+
+        <!-- Wireshark Recommended Display Filter -->
+        <div class="detail-block">
+          <div class="detail-label" data-i18n="modalFilterLabel">建議使用之 Wireshark 顯示過濾器 (Display Filter)</div>
+          <div class="code-box">
+            <span id="modalFilterCode"></span>
+            <button class="btn btn-sm" onclick="copyText(document.getElementById('modalFilterCode').textContent)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span data-i18n="copyFilterBtn">複製過濾器</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Launch Terminal Command -->
+        <div class="detail-block">
+          <div class="detail-label" data-i18n="modalWiresharkCmd">終端機直接啟動 Wireshark GUI</div>
+          <div class="code-box">
+            <span id="modalWiresharkCmd"></span>
+            <button class="btn btn-sm" onclick="copyText(document.getElementById('modalWiresharkCmd').textContent)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span data-i18n="copyBtn">複製</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tshark Command -->
+        <div class="detail-block">
+          <div class="detail-label" data-i18n="modalTsharkCmd">TShark 命令列快速排查指令</div>
+          <div class="code-box">
+            <span id="modalTsharkCmd"></span>
+            <button class="btn btn-sm" onclick="copyText(document.getElementById('modalTsharkCmd').textContent)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span data-i18n="copyBtn">複製</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem; color:var(--text-muted);">
+          檔案格式與大小：<span id="modalFormat"></span>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()" data-i18n="closeBtn">關閉視窗</button>
+        <a id="modalDownloadBtn" href="#" download class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="downloadBtn">下載封包檔案 (.pcap)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wireshark Cheat Sheet Modal -->
+  <div id="cheatSheetOverlay" class="modal-overlay">
+    <div class="modal-dialog" style="max-width:860px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:800; color:var(--text-primary);" data-i18n="cheatSheetTitle">Wireshark 必備速查手冊 (Essential Cheat Sheet)</h2>
+          <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:2px;" data-i18n="cheatSheetSub">高頻顯示過濾器、邏輯運算子、網路排查秘訣與內建分析工具導引</p>
+        </div>
+        <button class="modal-close" onclick="closeCheatSheet()">✕</button>
+      </div>
+
+      <div class="modal-body" style="gap:24px;">
+        <div>
+          <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent-blue); margin-bottom:10px;">1. 核心邏輯比較運算子 (Comparison Operators)</h3>
+          <table class="captures-table" style="font-size:0.8rem;">
+            <thead>
+              <tr><th>運算子</th><th>中文說明</th><th>範例過濾表達式</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>==</code> 或 <code>eq</code></td><td>等於 (Equal)</td><td><code>ip.src == 192.168.1.1</code></td></tr>
+              <tr><td><code>!=</code> 或 <code>ne</code></td><td>不等於 (Not Equal)</td><td><code>tcp.port != 80</code></td></tr>
+              <tr><td><code>&amp;&amp;</code> 或 <code>and</code></td><td>邏輯且 (Logical AND)</td><td><code>ip.addr == 10.0.0.1 &amp;&amp; tcp.flags.syn == 1</code></td></tr>
+              <tr><td><code>||</code> 或 <code>or</code></td><td>邏輯或 (Logical OR)</td><td><code>dns || http</code></td></tr>
+              <tr><td><code>!</code> 或 <code>not</code></td><td>邏輯非 (NOT)</td><td><code>!arp &amp;&amp; !stp</code></td></tr>
+              <tr><td><code>contains</code></td><td>包含特定字串</td><td><code>http.request.uri contains "admin"</code></td></tr>
+              <tr><td><code>matches</code></td><td>正規表達式匹配 (Regex)</td><td><code>http.user_agent matches "(?i)mozilla"</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent-blue); margin-bottom:10px;">2. 網路故障排查高頻顯示過濾器 (Diagnostic Filters)</h3>
+          <table class="captures-table" style="font-size:0.8rem;">
+            <thead>
+              <tr><th>故障情境</th><th>顯示過濾器語法</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>TCP 封包遺失與重傳</td><td><code>tcp.analysis.retransmission</code></td><td><button class="btn-copy-sm" onclick="copyText('tcp.analysis.retransmission')">複製</button></td></tr>
+              <tr><td>TCP 三次重複確認</td><td><code>tcp.analysis.duplicate_ack</code></td><td><button class="btn-copy-sm" onclick="copyText('tcp.analysis.duplicate_ack')">複製</button></td></tr>
+              <tr><td>TCP 零視窗凍結 (接收端卡死)</td><td><code>tcp.analysis.zero_window</code></td><td><button class="btn-copy-sm" onclick="copyText('tcp.analysis.zero_window')">複製</button></td></tr>
+              <tr><td>HTTP 4xx / 5xx 錯誤回應</td><td><code>http.response.code &gt;= 400</code></td><td><button class="btn-copy-sm" onclick="copyText('http.response.code >= 400')">複製</button></td></tr>
+              <tr><td>DNS 解析失敗 (ServFail / NXDomain)</td><td><code>dns.flags.rcode != 0</code></td><td><button class="btn-copy-sm" onclick="copyText('dns.flags.rcode != 0')">複製</button></td></tr>
+              <tr><td>TLS Client Hello (協商發起)</td><td><code>tls.handshake.type == 1</code></td><td><button class="btn-copy-sm" onclick="copyText('tls.handshake.type == 1')">複製</button></td></tr>
+              <tr><td>SYN 封包 (探測掃描 / SYN Flood)</td><td><code>tcp.flags.syn == 1 &amp;&amp; tcp.flags.ack == 0</code></td><td><button class="btn-copy-sm" onclick="copyText('tcp.flags.syn == 1 && tcp.flags.ack == 0')">複製</button></td></tr>
+              <tr><td>VoIP 網路電話 SIP 呼叫發起</td><td><code>sip.Method == "INVITE"</code></td><td><button class="btn-copy-sm" onclick="copyText('sip.Method == \"INVITE\"')">複製</button></td></tr>
+              <tr><td>Windows SMB 拒絕存取 (Access Denied)</td><td><code>smb2.nt_status == 0xc0000022</code></td><td><button class="btn-copy-sm" onclick="copyText('smb2.nt_status == 0xc0000022')">複製</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.95rem; font-weight:700; color:var(--accent-blue); margin-bottom:10px;">3. Wireshark 內建專業排查工具路徑導引</h3>
+          <ul style="color:var(--text-secondary); font-size:0.85rem; line-height:1.75; padding-left:18px;">
+            <li><strong>Analyze → Follow → TCP / HTTP / TLS Stream</strong>：追蹤串流。直接還原發送端與接收端的完整雙向純文字或解密對話內容。</li>
+            <li><strong>Analyze → Expert Information</strong>：專家資訊。集中列出所有 Checksum 錯誤、重傳、畸形封包與協議警告。</li>
+            <li><strong>Telephony → VoIP Calls</strong>：VoIP 通話分析。自動繪製 SIP 呼叫梯形圖、計算 RTP 抖動與遺失率，並提供內建播放器試聽錄音。</li>
+            <li><strong>Statistics → Protocol Hierarchy</strong>：通訊協定階層。以樹狀圖百分比檢視傳輸層、網路層之流量分佈，迅速揪出異常協定。</li>
+            <li><strong>Statistics → Conversations</strong>：通訊對話 (Top Talkers)。依 MAC/IP 查看哪兩台主機在短時間內傳輸了最大量封包。</li>
+            <li><strong>Edit → Preferences → Protocols → TLS</strong>：TLS 金鑰解密。設定 (Pre)-Master-Secret 金鑰紀錄檔路徑，即可直接解密 HTTPS 流量。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeCheatSheet()" data-i18n="closeReference">關閉速查手冊</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Script (Ensures 100% offline standalone execution with zero CORS restrictions) -->
+  <script src="data/captures_data.js"></script>
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+[
+  {
+    "id": "track_fundamentals",
+    "title": "Network Fundamentals 101",
+    "title_zh": "網路通訊基礎實戰 (101)",
+    "level": "Level 1: Beginner",
+    "level_zh": "第 1 級：初級入門",
+    "icon": "fa-graduation-cap",
+    "color": "emerald",
+    "description": "Essential protocol mechanics: ARP, ICMP Ping, DHCP address allocation, basic DNS resolution, and IPv4 packet fragmentation.",
+    "description_zh": "核心通訊協定實務：ARP 廣播位址解析、ICMP Ping 測試、DHCP DORA 4 步驟租約、標準 DNS 查詢與 IPv4 封包分段重組。",
+    "captures": [
+      "CAP-001",
+      "CAP-002",
+      "CAP-024",
+      "CAP-025",
+      "CAP-026",
+      "CAP-029",
+      "CAP-030"
+    ],
+    "key_concepts_zh": [
+      "第二層廣播 (FF:FF:FF:FF:FF:FF) 與單播 MAC 解析之 ARP 流程。",
+      "DHCP 4 步驟租賃機制 (Discover -> Offer -> Request -> ACK) 與 Option 參數。",
+      "ICMP Type 8 Echo Request 與 Type 0 Echo Reply 之序號對應。",
+      "IPv4 分段機制：Identification 識別碼、More Fragments (MF) 標記與 8 位元組倍數之 Fragment Offset。"
+    ]
+  },
+  {
+    "id": "track_web_crypto",
+    "title": "Web Protocols & TLS Cryptographic Decryption",
+    "title_zh": "Web 協定與 TLS 密碼解密分析",
+    "level": "Level 2: Intermediate",
+    "level_zh": "第 2 級：中級進階",
+    "icon": "fa-lock-open",
+    "color": "cyan",
+    "description": "Examine HTTP requests, TLS 1.2/1.3 handshakes, cipher negotiation, and decrypt application data using provided Master-Secrets.",
+    "description_zh": "檢視 HTTP 請求、TLS 1.2/1.3 安全交握、加密套件協商，並利用附帶的金鑰 (Master-Secret) 在 Wireshark 中直接解密明文流量。",
+    "captures": [
+      "CAP-012",
+      "CAP-013",
+      "CAP-014",
+      "CAP-078",
+      "CAP-079",
+      "CAP-080"
+    ],
+    "key_concepts_zh": [
+      "Client Hello 提出之密碼套件與 Server Hello 選定之演算法。",
+      "於 Wireshark 中設定 (Pre)-Master-Secret 金鑰紀錄檔解密 HTTPS 流量。",
+      "HTTP/2 單一 TCP 連線上的二進位訊框多工串流傳輸 (Multiplexing)。"
+    ]
+  },
+  {
+    "id": "track_security_forensics",
+    "title": "Cybersecurity & Malware Forensics",
+    "title_zh": "資安鑑識與惡意程式攻擊剖析",
+    "level": "Level 4: Expert",
+    "level_zh": "第 4 級：資深權威",
+    "icon": "fa-biohazard",
+    "color": "rose",
+    "description": "Real historical worm attacks (Blaster, Sasser, Slammer), SYN flood DoS attacks, buffer overflows, and exploitation traces.",
+    "description_zh": "真實歷史惡意蠕蟲感染（疾風 Blaster、Sasser、Slammer）、SYN Flood 阻斷服務攻擊、緩衝區溢位滲透與漏洞利用軌跡。",
+    "captures": [
+      "CAP-004",
+      "CAP-005",
+      "CAP-006",
+      "CAP-007",
+      "CAP-008"
+    ],
+    "key_concepts_zh": [
+      "識別蠕蟲程式對隨機 IP 與連續通訊埠的高頻掃描探測特徵。",
+      "在 DCE/RPC 與 SMB 負載中定位緩衝區溢位 NOP Sled (0x90) 與 Shellcode 注入碼。",
+      "剖析 SYN Flood 攻擊引發之 TCP 半開連線佇列 (Backlog) 耗竭。"
+    ]
+  },
+  {
+    "id": "track_troubleshooting",
+    "title": "TCP Troubleshooting & Network Anomalies",
+    "title_zh": "TCP 傳輸效能與異常疑難排解",
+    "level": "Level 3: Advanced",
+    "level_zh": "第 3 級：高級專家",
+    "icon": "fa-wrench",
+    "color": "amber",
+    "description": "Diagnose real-world network degradations: packet loss, retransmissions, duplicate ACKs, window stalls, and ARP storms.",
+    "description_zh": "診斷真實網路傳輸劣化：封包遺失、快速重傳、重複確認 (Duplicate ACK)、零視窗停頓與廣播風暴。",
+    "captures": [
+      "CAP-019",
+      "CAP-020",
+      "CAP-021"
+    ],
+    "key_concepts_zh": [
+      "利用 'tcp.analysis.flags' 快速鎖定網路延遲與封包遺失點。",
+      "理解 TCP 零視窗 (Zero Window) 產生的原因及對流量造成的凍結影響。",
+      "區分封包遺失重傳 (Retransmission) 與網路亂序抵達 (Out-of-Order)。"
+    ]
+  },
+  {
+    "id": "track_voip",
+    "title": "VoIP, Telephony & Real-Time Audio",
+    "title_zh": "VoIP 網路語音與通話品質診斷",
+    "level": "Level 3: Advanced",
+    "level_zh": "第 3 級：高級專家",
+    "icon": "fa-phone-volume",
+    "color": "teal",
+    "description": "SIP session setup, SDP media negotiation, RTP audio packet streams, jitter diagnosis, and cellular AMR codec calls.",
+    "description_zh": "SIP 呼叫建立、SDP 媒體協商、RTP 語音傳輸、抖動 (Jitter) 計算以及電信行動通訊 AMR 編碼通話分析。",
+    "captures": [
+      "CAP-009",
+      "CAP-010",
+      "CAP-011",
+      "CAP-045",
+      "CAP-046"
+    ],
+    "key_concepts_zh": [
+      "追蹤 SIP 完整呼叫建立流程：INVITE -> 100 Trying -> 180 Ringing -> 200 OK -> ACK。",
+      "使用 Wireshark Telephony -> VoIP Calls 與 RTP 串流分析計算遺失率與抖動。",
+      "在 Wireshark 內直接還原並試聽封包中錄製的通話語音。"
+    ]
+  },
+  {
+    "id": "track_routing",
+    "title": "Enterprise Routing, BGP & Switching",
+    "title_zh": "企業骨幹路由、BGP 與交換網路",
+    "level": "Level 3: Advanced",
+    "level_zh": "第 3 級：高級專家",
+    "icon": "fa-sitemap",
+    "color": "blue",
+    "description": "Core infrastructure protocols: BGP-4 routing updates, OSPF link-state convergence, Spanning Tree BPDUs, and VLANs.",
+    "description_zh": "核心基礎架構協定：BGP-4 外部路由宣告、OSPF 鏈路狀態收斂、生成樹協議 (STP) BPDU 與 802.1Q VLAN 隔離。",
+    "captures": [
+      "CAP-015",
+      "CAP-016",
+      "CAP-017",
+      "CAP-018"
+    ],
+    "key_concepts_zh": [
+      "BGP OPEN 協商、KEEPALIVE 心跳與 UPDATE 路由可達性通告 (NLRI)。",
+      "OSPF Designated Router (DR/BDR) 選舉與 LSA 鏈路狀態通告。",
+      "802.1Q 虛擬區域網路標記與生成樹 Root Bridge (根橋接器) 選舉機制。"
+    ]
+  },
+  {
+    "id": "track_industrial_iot",
+    "title": "Industrial Control Systems (ICS) & Wireless",
+    "title_zh": "工控系統 (ICS/SCADA) 與無線協定",
+    "level": "Level 4: Expert",
+    "level_zh": "第 4 級：資深權威",
+    "icon": "fa-industry",
+    "color": "orange",
+    "description": "SCADA/ICS fieldbus protocols (Modbus TCP, Siemens S7COMM, BACnet), Wi-Fi 802.11 monitor mode, and Bluetooth HCI captures.",
+    "description_zh": "工業自動化現場總線協定（Modbus TCP、西門子 S7COMM、BACnet）、Wi-Fi 802.11 監聽訊框與藍牙 HCI 傳輸封包。",
+    "captures": [
+      "CAP-035",
+      "CAP-036",
+      "CAP-037",
+      "CAP-038"
+    ],
+    "key_concepts_zh": [
+      "Modbus Application Protocol (MBAP) 交易 ID 與讀取暫存器功能碼 (0x03)。",
+      "西門子 S7COMM 對工業 PLC 資料區塊 (DB) 的記憶體讀寫控制指令。",
+      "Wi-Fi 802.11 Beacon 廣播管理訊框與 WPA/WPA2 4-way 四向認證交握。"
+    ]
+  }
+]
